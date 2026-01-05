@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+checkpoints/
+case_study_mice/data
+case_study_mice/results
+case_study_trains/data
+case_study_toy/results
