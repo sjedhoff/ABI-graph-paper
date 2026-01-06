@@ -56,5 +56,14 @@ Simulation and inference are run in Python using the [**BayesFlow**](https://bay
 
 ## Citation
 
-If you use this code, please cite our paper (citation info to be added once available).
-
+```bibtex
+@misc{jedhoff2026micetrainsamortizedbayesian,
+      title={From Mice to Trains: Amortized Bayesian Inference on Graph Data}, 
+      author={Svenja Jedhoff and Elizaveta Semenova and Aura Raulo and Anne Meyer and Paul-Christian Bürkner},
+      year={2026},
+      eprint={2601.02241},
+      archivePrefix={arXiv},
+      primaryClass={stat.ML},
+      url={https://arxiv.org/abs/2601.02241}, 
+}
+```
