@@ -44,20 +44,19 @@ metrics <- metrics %>%
 
 
 
-  )
 
 
 ### ---- Table for the Appendix ---- ##
 
 metrics_out <- metrics %>%
   group_by(day, summary_network) %>%
-  summarise("val_loss_mean" = median(VAL_LOSS_LAST),
-            "R_ND_mean" = median(R_ND),
-            "R_EF_mean" = median(R_EF),
-            "LG_ND_mean" = median(LG_ND),
-            "LG_EF_mean" = median(LG_EF),
-            "PC_ND_mean" = median(PC_ND),
-            "PC_EF_mean" = median(PC_EF)
+  summarise("val_loss_median" = median(VAL_LOSS_LAST),
+            "R_ND_median" = median(R_ND),
+            "R_EF_median" = median(R_EF),
+            "LG_ND_median" = median(LG_ND),
+            "LG_EF_median" = median(LG_EF),
+            "PC_ND_median" = median(PC_ND),
+            "PC_EF_median" = median(PC_EF))
 print(xtable(metrics_out, digits = 2), include.rownames = FALSE)
 
 

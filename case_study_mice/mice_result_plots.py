@@ -97,7 +97,7 @@ post_draws = approximator.sample(conditions=test_data_subset, num_samples=500)
 var_names = [r"Network Density $\delta$", r"Exchange Factor $\alpha$"]
 
 f = bf.diagnostics.recovery(estimates=post_draws, targets=test_data_subset, variable_names=var_names,
-figsize=[7.4,4.8], uncertainty_agg_kwargs={"prob":0.8})
+figsize=[7.4,4.8])
 #f.savefig("plots/mice_settransformer_day_5_recovery.pdf")
 
 
