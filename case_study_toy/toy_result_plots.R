@@ -3,6 +3,7 @@ library(tidyr)
 library(ggplot2)
 library(patchwork)
 
+base_cols <- c("#1f77b4", "#d62728", "#2ca02c", "#9467bd")
 
 # Load the data
 ################################################################################
@@ -254,7 +255,7 @@ print(xtable(metrics_out, digits = 2), include.rownames = FALSE)
 
 # Calibration of data-dependent test quantities
 ################################################################################
-SBC_data <- read_csv("case_study_toy/results/SBC_data.csv")
+SBC_data <- read.csv("case_study_toy/results/SBC_data.csv")
 
 networks <- strsplit(SBC_data$wf_name, "-")
 SBC_data$summary_networks <- unlist(lapply(networks, function(x) x[1]))
@@ -297,7 +298,10 @@ df_plot <- SBC_data %>%
   ) %>%
   mutate(value_type = recode(value_type, "lg" = "Calibration", "r" = "Recovery")) %>%
   mutate(metric = factor(metric, levels =   c("Spectral Gap","Edge Density",
-                          "Degree Assort.","Global Clustering")))
+                          "Degree Assort.","Global Clustering"))) %>%
+  mutate(aggregation_layer = factor(aggregation_layer,
+                             levels = c("MeanPooling", "InvariantLayer", "MHAttention"),
+                             labels = c("Mean", "Invariant", "PMA")))
 
 base_cols <- c("#1f77b4", "#d62728", "#2ca02c", "#9467bd")
 pd <- position_dodge(width = 0.6)
@@ -387,3 +391,56 @@ metrics_out <- df_wide %>%
 library(xtable)
 print(xtable(metrics_out, digits = 2), include.rownames = FALSE)
 
+
+# Recovery over different training data sizes
+################################################################################
+data <- read.csv("case_study_toy/results/recovery_varying_datasizes.csv")
+
+
+networks <- strsplit(data$Network, "-")
+data$summary_networks <- unlist(lapply(networks, function(x) x[1]))
+data$aggregation_layer <- unlist(lapply(networks, function(x) x[2]))
+
+map <- c(
+  "SetTrans"   = "SetTransformer",
+  "GraphTrans" = "GraphTransformer",
+  "DeepSet"    = "DeepSets"
+)
+data <- data %>% mutate(summary_networks = recode(summary_networks, !!!map))
+
+data$pi_correlation <- rowMeans(data[,c("pi_aa_correlation", "pi_ab_correlation", "pi_bb_correlation")])
+data <- data %>%
+  pivot_longer(
+    cols      = c(pi_correlation, gamma_correlation),
+    names_to  = "variable",
+    values_to = "correlation"
+  ) %>%
+  mutate(variable = recode(variable,
+                           "pi_correlation"    = "pi",
+                           "gamma_correlation" = "gamma"
+  ))
+
+ggplot(data, aes(x = Dataset.Size, 
+                 y = correlation, group = interaction(summary_networks, variable), 
+                 color = summary_networks, shape = factor(variable),
+                 linetype = factor(variable))) +
+  geom_point() +
+  geom_line() +
+  scale_shape_discrete(
+    name   = "Parameter",
+    labels = c("pi" = expression(pi), "gamma" = expression(lambda))
+  ) +
+  scale_linetype_discrete(
+    name   = "Parameter",
+    labels = c("pi" = expression(pi), "gamma" = expression(lambda))
+  ) +
+  scale_color_manual(name = "Summary network", values = base_cols) +
+  theme_light() + 
+  scale_x_log10(breaks = c(3200, 6400, 12800, 32000)) +
+  labs(x = "Size of training dataset", y = "Recovery") +
+  theme(legend.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.box.margin = margin(t = -6, r = 0, b = 0, l = 0),
+        legend.margin = margin(0, 0, 0, 0),
+        plot.margin = margin(0, 0, 0, 0))
+ggsave("plots/toy_recovery_varying_datasizes.pdf", width = 6.8, height = 3)
