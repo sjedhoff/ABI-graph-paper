@@ -1,0 +1,10 @@
+bayesflow @ git+https://github.com/bayesflow-org/bayesflow@e6307bbf7104a6fb0ea7090fa5d4ad5a04d10023
+keras==3.13.2
+matplotlib==3.10.8
+networkx==3.6.1
+numpy==2.4.3
+pandas==3.0.1
+pyreadr==0.5.3
+scipy==1.17.1
+tensorflow==2.19.0
+torch==2.5.1
